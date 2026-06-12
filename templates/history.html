@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Riwayat Investigasi</title>
+</head>
+<body>
+
+<h2>Riwayat Investigasi</h2>
+
+<table border="1" cellpadding="10">
+
+    <tr>
+        <th>File</th>
+        <th>Penerima</th>
+        <th>Status</th>
+        <th>Tanggal</th>
+    </tr>
+
+    {% for item in investigations %}
+    <tr>
+        <td>{{ item[0] }}</td>
+        <td>{{ item[1] }}</td>
+        <td>{{ item[2] }}</td>
+        <td>{{ item[3] }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+<br>
+
+<a href="/">
+    <button>Kembali Dashboard</button>
+</a>
+
+</body>
+</html>

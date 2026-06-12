@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Distribusi Dokumen</title>
+</head>
+<body>
+
+<h2>Distribusi Dokumen</h2>
+
+<form method="POST">
+
+    <label>Pilih Dokumen:</label>
+
+    <select name="document_id">
+
+        {% for doc in documents %}
+
+        <option value="{{ doc[0] }}">
+            {{ doc[0] }} - {{ doc[1] }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <label>Nama Penerima:</label>
+
+    <input
+        type="text"
+        name="recipient_name"
+        required
+    >
+
+    <br><br>
+
+    <button type="submit">
+        Distribusikan
+    </button>
+
+</form>
+
+<br>
+
+<a href="/">
+    Kembali Dashboard
+</a>
+
+</body>
+</html>
