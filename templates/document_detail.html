@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detail Dokumen</title>
+</head>
+<body>
+
+<h1>Detail Dokumen</h1>
+
+<p><b>ID Dokumen :</b> {{ document[0] }}</p>
+
+<p><b>Nama File :</b> {{ document[1] }}</p>
+
+<p><b>SHA-256 :</b></p>
+
+<textarea rows="5" cols="90">
+{{ document[2] }}
+</textarea>
+
+<p><b>Total Distribusi :</b> {{ total_distributions }}</p>
+
+<h2>Daftar Penerima</h2>
+
+<table border="1" cellpadding="8">
+
+<tr>
+    <th>Penerima</th>
+    <th>Fingerprint</th>
+    <th>Tanggal Distribusi</th>
+</tr>
+
+{% for item in distributions %}
+
+<tr>
+
+<td>
+{{ item[0] }}
+</td>
+
+<td>
+{{ item[1] }}
+</td>
+
+<td>
+{{ item[2] }}
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="/documents">
+
+<button>Kembali ke Daftar Dokumen</button>
+
+</a>
+
+</body>
+</html>

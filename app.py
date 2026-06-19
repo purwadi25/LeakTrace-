@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, session
-from reportlab.pdfgen import canvas
 import os
 import hashlib
 import pymysql
@@ -306,10 +305,6 @@ TERDETEKSI</p>
 
 <br>
 
-<a href="/export_pdf/{filename}/{recipient}/TERDETEKSI">
-    <button>Download PDF</button>
-</a>
-
 <br><br>
 
 <a href="/">
@@ -467,50 +462,157 @@ def history():
         investigations=investigations
     )
 
-@app.route('/export_pdf/<filename>/<recipient>/<status>')
-def export_pdf(
-    filename,
-    recipient,
-    status
-):
+# ==========================
+# DAFTAR DISTRUSI DOKUMEN
+# ==========================
+@app.route('/distributions')
+def distributions():
 
-    pdf_file = "investigation_report.pdf"
+    connection = get_db_connection()
+    cursor = connection.cursor()
 
-    c = canvas.Canvas(pdf_file)
+    cursor.execute("""
+        SELECT
+            distributions.id,
+            documents.filename,
+            distributions.recipient_name,
+            distributions.fingerprint,
+            distributions.distributed_at
+        FROM distributions
+        JOIN documents
+        ON distributions.document_id = documents.id
+        ORDER BY distributions.distributed_at DESC
+    """)
 
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(
-        100,
-        800,
-        "LEAKTRACE INVESTIGATION REPORT"
+    data_distributions = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return render_template(
+        'distributions.html',
+        data_distributions=data_distributions
     )
 
-    c.setFont("Helvetica", 12)
+@app.route('/documents')
+def documents():
 
-    c.drawString(
-        100,
-        750,
-        f"Document : {filename}"
+    if 'logged_in' not in session:
+        return redirect('/login')
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT
+            id,
+            filename,
+            original_hash,
+            upload_date
+        FROM documents
+        ORDER BY upload_date DESC
+    """)
+
+    documents = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return render_template(
+        'documents.html',
+        documents=documents
     )
 
-    c.drawString(
-        100,
-        720,
-        f"Recipient : {recipient}"
+# ==========================
+# DETAIL DOKUMEN
+# ==========================
+@app.route('/document/<int:id>')
+def document_detail(id):
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    # Ambil data dokumen
+    cursor.execute("""
+        SELECT id, filename, original_hash
+        FROM documents
+        WHERE id=%s
+    """, (id,))
+
+    document = cursor.fetchone()
+
+    if not document:
+        cursor.close()
+        connection.close()
+        return "Dokumen tidak ditemukan"
+
+    # Ambil daftar distribusi dokumen
+    cursor.execute("""
+        SELECT
+            recipient_name,
+            fingerprint,
+            distributed_at
+        FROM distributions
+        WHERE document_id=%s
+        ORDER BY distributed_at DESC
+    """, (id,))
+
+    distributions = cursor.fetchall()
+
+    total_distributions = len(distributions)
+
+    cursor.close()
+    connection.close()
+
+    return render_template(
+        'document_detail.html',
+        document=document,
+        distributions=distributions,
+        total_distributions=total_distributions
     )
 
-    c.drawString(
-        100,
-        690,
-        f"Status : {status}"
+# ==========================
+# SEARCH
+# ==========================
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+
+    results = []
+
+    if request.method == 'POST':
+
+        keyword = request.form['keyword']
+
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            SELECT
+                documents.filename,
+                distributions.recipient_name,
+                distributions.fingerprint,
+                distributions.distributed_at
+            FROM distributions
+            JOIN documents
+            ON distributions.document_id = documents.id
+            WHERE documents.filename LIKE %s
+            OR distributions.recipient_name LIKE %s
+            ORDER BY distributions.distributed_at DESC
+        """, (
+            '%' + keyword + '%',
+            '%' + keyword + '%'
+        ))
+
+        results = cursor.fetchall()
+
+        cursor.close()
+        connection.close()
+
+    return render_template(
+        'search.html',
+        results=results
     )
 
-    c.save()
-
-    return send_file(
-        pdf_file,
-        as_attachment=True
-    )
 
 # ==========================
 # MAIN

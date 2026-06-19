@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pencarian</title>
+</head>
+<body>
+
+<h1>Pencarian Dokumen dan Penerima</h1>
+
+<form method="POST">
+
+<input
+type="text"
+name="keyword"
+placeholder="Nama file atau penerima"
+required>
+
+<button type="submit">
+Cari
+</button>
+
+</form>
+
+<br>
+
+<table border="1">
+
+<tr>
+
+<th>Dokumen</th>
+<th>Penerima</th>
+<th>Fingerprint</th>
+<th>Tanggal Distribusi</th>
+
+</tr>
+
+{% for row in results %}
+
+<tr>
+
+<td>{{ row[0] }}</td>
+
+<td>{{ row[1] }}</td>
+
+<td>{{ row[2] }}</td>
+
+<td>{{ row[3] }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="/">
+<button>Kembali Dashboard</button>
+</a>
+
+</body>
+</html>

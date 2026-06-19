@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar Dokumen</title>
+</head>
+<body>
+
+<h1>Daftar Dokumen</h1>
+
+<table border="1">
+
+<tr>
+    <th>ID</th>
+    <th>Nama File</th>
+    <th>SHA-256</th>
+    <th>Tanggal Upload</th>
+    <th>Aksi</th>
+</tr>
+
+{% for doc in documents %}
+
+<tr>
+
+    <td>{{ doc[0] }}</td>
+
+    <td>{{ doc[1] }}</td>
+
+    <td>{{ doc[2] }}</td>
+
+    <td>{{ doc[3] }}</td>
+
+    <td>
+
+        <a href="/document/{{ doc[0] }}">
+            <button>Detail</button>
+        </a>
+
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="/">
+    <button>Kembali Dashboard</button>
+</a>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar Distribusi</title>
+</head>
+<body>
+
+<h1>Daftar Distribusi Dokumen</h1>
+
+<table border="1" cellpadding="8">
+
+<tr>
+    <th>ID</th>
+    <th>Dokumen</th>
+    <th>Penerima</th>
+    <th>Fingerprint</th>
+    <th>Tanggal</th>
+</tr>
+
+{% for item in data_distributions %}
+
+<tr>
+    <td>{{ item[0] }}</td>
+    <td>{{ item[1] }}</td>
+    <td>{{ item[2] }}</td>
+    <td>{{ item[3] }}</td>
+    <td>{{ item[4] }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="/">
+<button>Kembali Dashboard</button>
+</a>
+
+</body>
+</html>
